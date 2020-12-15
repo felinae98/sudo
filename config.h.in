@@ -3,6 +3,9 @@
 #ifndef SUDO_CONFIG_H
 #define SUDO_CONFIG_H
 
+/* Define to 1 if you want the insults from the "chinese" version sudo. */
+#undef CHINESE_INSULTS
+
 /* Define to 1 if you want the insults from the "classic" version sudo. */
 #undef CLASSIC_INSULTS
 

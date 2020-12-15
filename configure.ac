@@ -1143,6 +1143,15 @@ AC_ARG_WITH(classic-insults, [AS_HELP_STRING([--with-classic-insults], [include 
 		;;
 esac])
 
+AC_ARG_WITH(chinese-insults, [AS_HELP_STRING([--with-chinese-insults], [include the insults from the "chinese" sudo])],
+[case $with_chinese_insults in
+    yes)	AC_DEFINE(CHINESE_INSULTS)
+		;;
+    no)		;;
+    *)		AC_MSG_ERROR(["--with-chinese-insults does not take an argument."])
+		;;
+esac])
+
 AC_ARG_WITH(csops-insults, [AS_HELP_STRING([--with-csops-insults], [include CSOps insults])],
 [case $with_csops_insults in
     yes)	AC_DEFINE(CSOPS_INSULTS)
@@ -1213,6 +1222,7 @@ if test "$insults" = "on"; then
     test "$with_hal_insults" = "yes" && i="hal ${i}"
     test "$with_csops_insults" = "yes" && i="csops ${i}"
     test "$with_classic_insults" = "yes" && i="classic ${i}"
+    test "$with_chinese_insults" = "yes" && i="chinese ${i}"
     AC_MSG_RESULT([$i])
 fi
 
@@ -4860,6 +4870,7 @@ dnl
 dnl Autoheader templates
 dnl
 AH_TEMPLATE(CLASSIC_INSULTS, [Define to 1 if you want the insults from the "classic" version sudo.])
+AH_TEMPLATE(CHINESE_INSULTS, [Define to 1 if you want the insults from the "chinese" version sudo.])
 AH_TEMPLATE(CSOPS_INSULTS, [Define to 1 if you want insults culled from the twisted minds of CSOps.])
 AH_TEMPLATE(DONT_LEAK_PATH_INFO, [Define to 1 if you want sudo to display "command not allowed" instead of "command not found" when a command cannot be found.])
 AH_TEMPLATE(ENV_DEBUG, [Define to 1 to enable environment function debugging.])

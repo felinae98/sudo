@@ -847,7 +847,6 @@ infodir
 docdir
 oldincludedir
 includedir
-runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -944,6 +943,7 @@ with_tty_tickets
 with_insults
 with_all_insults
 with_classic_insults
+with_chinese_insults
 with_csops_insults
 with_hal_insults
 with_goons_insults
@@ -1072,7 +1072,6 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
-runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
@@ -1325,15 +1324,6 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
-  -runstatedir | --runstatedir | --runstatedi | --runstated \
-  | --runstate | --runstat | --runsta | --runst | --runs \
-  | --run | --ru | --r)
-    ac_prev=runstatedir ;;
-  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
-  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
-  | --run=* | --ru=* | --r=*)
-    runstatedir=$ac_optarg ;;
-
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1471,7 +1461,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir runstatedir
+		libdir localedir mandir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1621,10 +1611,9 @@ Fine tuning of the installation directories:
   --bindir=DIR            user executables [EPREFIX/bin]
   --sbindir=DIR           system admin executables [EPREFIX/sbin]
   --libexecdir=DIR        program executables [EPREFIX/libexec]
-  --sysconfdir=DIR        read-only single-machine data [/etc]
+  --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
-  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -1799,6 +1788,7 @@ Optional Packages:
   --with-insults          insult the user for entering an incorrect password
   --with-all-insults      include all the sudo insult sets
   --with-classic-insults  include the insults from the "classic" sudo
+  --with-chinese-insults  include the insults from the "chinese" sudo
   --with-csops-insults    include CSOps insults
   --with-hal-insults      include 2001-like insults
   --with-goons-insults    include the insults from the "Goon Show"
@@ -2913,7 +2903,6 @@ $as_echo "$as_me: creating cache $cache_file" >&6;}
   >$cache_file
 fi
 
-as_fn_append ac_header_list " sys/types.h"
 as_fn_append ac_header_list " netgroup.h"
 as_fn_append ac_header_list " paths.h"
 as_fn_append ac_header_list " spawn.h"
@@ -5878,6 +5867,20 @@ fi
 
 
 
+# Check whether --with-chinese-insults was given.
+if test "${with_chinese_insults+set}" = set; then :
+  withval=$with_chinese_insults; case $with_chinese_insults in
+    yes)	$as_echo "#define CHINESE_INSULTS 1" >>confdefs.h
+
+		;;
+    no)		;;
+    *)		as_fn_error $? "\"--with-chinese-insults does not take an argument.\"" "$LINENO" 5
+		;;
+esac
+fi
+
+
+
 # Check whether --with-csops-insults was given.
 if test "${with_csops_insults+set}" = set; then :
   withval=$with_csops_insults; case $with_csops_insults in
@@ -5994,6 +5997,7 @@ $as_echo_n "checking which insult sets to include... " >&6; }
     test "$with_hal_insults" = "yes" && i="hal ${i}"
     test "$with_csops_insults" = "yes" && i="csops ${i}"
     test "$with_classic_insults" = "yes" && i="classic ${i}"
+    test "$with_chinese_insults" = "yes" && i="chinese ${i}"
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $i" >&5
 $as_echo "$i" >&6; }
 fi
@@ -7280,8 +7284,8 @@ esac
 
 
 
-macro_version='2.4.6'
-macro_revision='2.4.6'
+macro_version='2.4.6.42-b88ce-dirty'
+macro_revision='2.4.6.42'
 
 
 
@@ -8343,7 +8347,21 @@ haiku*)
   ;;
 
 hpux10.20* | hpux11*)
-  lt_cv_deplibs_check_method=pass_all
+  lt_cv_file_magic_cmd=/usr/bin/file
+  case $host_cpu in
+  ia64*)
+    lt_cv_deplibs_check_method='file_magic (s[0-9][0-9][0-9]|ELF-[0-9][0-9]) shared object file - IA64'
+    lt_cv_file_magic_test_file=/usr/lib/hpux32/libc.so
+    ;;
+  hppa*64*)
+    lt_cv_deplibs_check_method='file_magic (s[0-9][0-9][0-9]|ELF[ -][0-9][0-9])(-bit)?( [LM]SB)? shared object( file)?[, -]* PA-RISC [0-9]\.[0-9]'
+    lt_cv_file_magic_test_file=/usr/lib/pa20_64/libc.sl
+    ;;
+  *)
+    lt_cv_deplibs_check_method='file_magic (s[0-9][0-9][0-9]|PA-RISC[0-9]\.[0-9]) shared library'
+    lt_cv_file_magic_test_file=/usr/lib/libc.sl
+    ;;
+  esac
   ;;
 
 interix[3-9]*)
@@ -8728,12 +8746,28 @@ esac
 fi
 
 : ${AR=ar}
-: ${AR_FLAGS=cru}
 
 
 
 
 
+
+# Use ARFLAGS variable as AR's operation code to sync the variable naming with
+# Automake.  If both AR_FLAGS and ARFLAGS are specified, AR_FLAGS should have
+# higher priority because thats what people were doing historically (setting
+# ARFLAGS for automake and AR_FLAGS for libtool).  FIXME: Make the AR_FLAGS
+# variable obsoleted/removed.
+
+test ${AR_FLAGS+y} || AR_FLAGS=${ARFLAGS-cr}
+lt_ar_flags=$AR_FLAGS
+
+
+
+
+
+
+# Make AR_FLAGS overridable by 'make ARFLAGS='.  Don't try to run-time override
+# by AR_FLAGS because that was never working and AR_FLAGS is about to die.
 
 
 
@@ -9225,7 +9259,7 @@ for ac_symprfx in "" "_"; do
   if test "$lt_cv_nm_interface" = "MS dumpbin"; then
     # Fake it for dumpbin and say T for any non-static function,
     # D for any global variable and I for any imported variable.
-    # Also find C++ and __fastcall symbols from MSVC++,
+    # Also find C++ and __fastcall symbols from MSVC++ or ICC,
     # which start with @ or ?.
     lt_cv_sys_global_symbol_pipe="$AWK '"\
 "     {last_section=section; section=\$ 3};"\
@@ -10494,8 +10528,8 @@ int forced_loaded() { return 2;}
 _LT_EOF
       echo "$LTCC $LTCFLAGS -c -o conftest.o conftest.c" >&5
       $LTCC $LTCFLAGS -c -o conftest.o conftest.c 2>&5
-      echo "$AR cru libconftest.a conftest.o" >&5
-      $AR cru libconftest.a conftest.o 2>&5
+      echo "$AR $AR_FLAGS libconftest.a conftest.o" >&5
+      $AR $AR_FLAGS libconftest.a conftest.o 2>&5
       echo "$RANLIB libconftest.a" >&5
       $RANLIB libconftest.a 2>&5
       cat > conftest.c << _LT_EOF
@@ -10890,8 +10924,8 @@ esac
 ofile=libtool
 can_build_shared=yes
 
-# All known linkers require a '.a' archive for static linking (except MSVC,
-# which needs '.lib').
+# All known linkers require a '.a' archive for static linking (except MSVC and
+# ICC, which need '.lib').
 libext=a
 
 with_gnu_ld=$lt_cv_prog_gnu_ld
@@ -11792,8 +11826,6 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
   hardcode_libdir_separator=
   hardcode_minus_L=no
   hardcode_shlibpath_var=unsupported
-  fix_hardcoded_libdir_flag_spec=
-  fix_hardcoded_libdir_flag_spec_ld=
   inherit_rpath=no
   link_all_deplibs=unknown
   module_cmds=
@@ -11820,15 +11852,15 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
 
   case $host_os in
   cygwin* | mingw* | pw32* | cegcc*)
-    # FIXME: the MSVC++ port hasn't been tested in a loooong time
+    # FIXME: the MSVC++ and ICC port hasn't been tested in a loooong time
     # When not using gcc, we currently assume that we are using
-    # Microsoft Visual C++.
+    # Microsoft Visual C++ or Intel C++ Compiler.
     if test yes != "$GCC"; then
       with_gnu_ld=no
     fi
     ;;
   interix*)
-    # we just hope/assume this is gcc and not c89 (= MSVC++)
+    # we just hope/assume this is gcc and not c89 (= MSVC++ or ICC)
     with_gnu_ld=yes
     ;;
   openbsd* | bitrig*)
@@ -11992,6 +12024,7 @@ _LT_EOF
 	emximp -o $lib $output_objdir/$libname.def'
       old_archive_From_new_cmds='emximp -o $output_objdir/${libname}_dll.a $output_objdir/$libname.def'
       enable_shared_with_static_runtimes=yes
+      file_list_spec='@'
       ;;
 
     interix[3-9]*)
@@ -12209,7 +12242,7 @@ _LT_EOF
 	if $NM -V 2>&1 | $GREP 'GNU' > /dev/null; then
 	  export_symbols_cmds='$NM -Bpg $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B") || (\$ 2 == "W")) && (substr(\$ 3,1,1) != ".")) { if (\$ 2 == "W") { print \$ 3 " weak" } else { print \$ 3 } } }'\'' | sort -u > $export_symbols'
 	else
-	  export_symbols_cmds='`func_echo_all $NM | $SED -e '\''s/B\([^B]*\)$/P\1/'\''` -PCpgl $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B") || (\$ 2 == "W") || (\$ 2 == "V") || (\$ 2 == "Z")) && (substr(\$ 1,1,1) != ".")) { if ((\$ 2 == "W") || (\$ 2 == "V") || (\$ 2 == "Z")) { print \$ 1 " weak" } else { print \$ 1 } } }'\'' | sort -u > $export_symbols'
+	  export_symbols_cmds='`func_echo_all $NM | $SED -e '\''s/B\([^B]*\)$/P\1/'\''` -PCpgl $libobjs $convenience | awk '\''{ if (((\$ 2 == "T") || (\$ 2 == "D") || (\$ 2 == "B") || (\$ 2 == "L") || (\$ 2 == "W") || (\$ 2 == "V") || (\$ 2 == "Z")) && (substr(\$ 1,1,1) != ".")) { if ((\$ 2 == "W") || (\$ 2 == "V") || (\$ 2 == "Z")) { print \$ 1 " weak" } else { print \$ 1 } } }'\'' | sort -u > $export_symbols'
 	fi
 	aix_use_runtimelinking=no
 
@@ -12476,12 +12509,12 @@ fi
 
     cygwin* | mingw* | pw32* | cegcc*)
       # When not using gcc, we currently assume that we are using
-      # Microsoft Visual C++.
+      # Microsoft Visual C++ or Intel C++ Compiler.
       # hardcode_libdir_flag_spec is actually meaningless, as there is
       # no search path for DLLs.
       case $cc_basename in
-      cl*)
-	# Native MSVC
+      cl* | icl*)
+	# Native MSVC or ICC
 	hardcode_libdir_flag_spec=' '
 	allow_undefined_flag=unsupported
 	always_export_symbols=yes
@@ -12522,7 +12555,7 @@ fi
           fi'
 	;;
       *)
-	# Assume MSVC wrapper
+	# Assume MSVC and ICC wrapper
 	hardcode_libdir_flag_spec=' '
 	allow_undefined_flag=unsupported
 	# Tell ltmain to make .lib files, not .a files.
@@ -12623,14 +12656,12 @@ fi
 
     hpux10*)
       if test yes,no = "$GCC,$with_gnu_ld"; then
-	archive_cmds='$CC -shared $pic_flag $wl+h $wl$soname -o $lib $libobjs $deplibs $compiler_flags $fix_hardcoded_libdir_flag'
-	module_cmds='$CC -shared $pic_flag -o $lib $libobjs $deplibs $compiler_flags $fix_hardcoded_libdir_flag'
+	archive_cmds='$CC -shared $pic_flag $wl+h $wl$soname $wl+b $wl$install_libdir -o $lib $libobjs $deplibs $compiler_flags'
       else
-	archive_cmds='$LD -b +h $soname -o $lib $libobjs $deplibs $linker_flags $fix_hardcoded_libdir_flag_ld'
-	module_cmds='$LD -b -o $lib $libobjs $deplibs $linker_flags $fix_hardcoded_libdir_flag_ld'
+	archive_cmds='$LD -b +h $soname +b $install_libdir -o $lib $libobjs $deplibs $linker_flags'
       fi
       if test no = "$with_gnu_ld"; then
-	hardcode_libdir_flag_spec='$wl+b $wl$libdir $fix_hardcoded_libdir_flag'
+	hardcode_libdir_flag_spec='$wl+b $wl$libdir'
 	hardcode_libdir_separator=:
 	hardcode_direct=yes
 	hardcode_direct_absolute=yes
@@ -12638,43 +12669,6 @@ fi
 	# hardcode_minus_L: Not really in the search PATH,
 	# but as the default location of the library.
 	hardcode_minus_L=yes
-	# gcc-3.0.1 (collect2) breaks on -Wl,+cdp.
-	# HP-cc ignores -Wl,+cdp, and we test the linker for +cdp support.
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if +cdp linker flag works" >&5
-$as_echo_n "checking if +cdp linker flag works... " >&6; }
-if ${lt_cv_ldflag_cdp_works+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  lt_cv_ldflag_cdp_works=no
-	  save_LDFLAGS=$LDFLAGS
-	  LDFLAGS="$LDFLAGS -Wl,+cdp -Wl,/usr/lib/libc.1:/nonexistent -Wl,+cdp -Wl,/lib/libc.1:/nonexistent"
-	  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  lt_cv_ldflag_cdp_works=yes
-else
-  lt_cv_ldflag_cdp_works=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-	  LDFLAGS="$save_LDFLAGS"
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_ldflag_cdp_works" >&5
-$as_echo "$lt_cv_ldflag_cdp_works" >&6; }
-	if test "$lt_cv_ldflag_cdp_works" = yes; then
-	  fix_hardcoded_libdir_flag_spec='${wl}+cdp ${wl}${linkdir}/${dlname}:${libdir}/${dlname}'
-	  fix_hardcoded_libdir_flag_spec_ld='+cdp ${linkdir}/${dlname}:${libdir}/${dlname}'
-	fi
       fi
       ;;
 
@@ -12683,26 +12677,21 @@ $as_echo "$lt_cv_ldflag_cdp_works" >&6; }
 	case $host_cpu in
 	hppa*64*)
 	  archive_cmds='$CC -shared $wl+h $wl$soname -o $lib $libobjs $deplibs $compiler_flags'
-	  module_cmds='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
 	  ;;
 	ia64*)
 	  archive_cmds='$CC -shared $pic_flag $wl+h $wl$soname $wl+nodefaultrpath -o $lib $libobjs $deplibs $compiler_flags'
-	  module_cmds='$CC -shared $pic_flag $wl+nodefaultrpath -o $lib $libobjs $deplibs $compiler_flags'
 	  ;;
 	*)
-	  archive_cmds='$CC -shared $pic_flag $wl+h $wl$soname -o $lib $libobjs $deplibs $compiler_flags $fix_hardcoded_libdir_flag'
-	  module_cmds='$CC -shared $pic_flag -o $lib $libobjs $deplibs $compiler_flags $fix_hardcoded_libdir_flag'
+	  archive_cmds='$CC -shared $pic_flag $wl+h $wl$soname $wl+b $wl$install_libdir -o $lib $libobjs $deplibs $compiler_flags'
 	  ;;
 	esac
       else
 	case $host_cpu in
 	hppa*64*)
 	  archive_cmds='$CC -b $wl+h $wl$soname -o $lib $libobjs $deplibs $compiler_flags'
-	  module_cmds='$CC -b -o $lib $libobjs $deplibs $compiler_flags'
 	  ;;
 	ia64*)
 	  archive_cmds='$CC -b $wl+h $wl$soname $wl+nodefaultrpath -o $lib $libobjs $deplibs $compiler_flags'
-	  module_cmds='$CC -b $wl+nodefaultrpath -o $lib $libobjs $deplibs $compiler_flags'
 	  ;;
 	*)
 
@@ -12740,22 +12729,16 @@ fi
 $as_echo "$lt_cv_prog_compiler__b" >&6; }
 
 if test yes = "$lt_cv_prog_compiler__b"; then
-
-	      archive_cmds='$CC -b $wl+h $wl$soname -o $lib $libobjs $deplibs $compiler_flags $fix_hardcoded_libdir_flag'
-	      module_cmds='$CC -b -o $lib $libobjs $deplibs $compiler_flags $fix_hardcoded_libdir_flag'
-
+    archive_cmds='$CC -b $wl+h $wl$soname $wl+b $wl$install_libdir -o $lib $libobjs $deplibs $compiler_flags'
 else
-
-	      archive_cmds='$LD -b +h $soname -o $lib $libobjs $deplibs $linker_flags $fix_hardcoded_libdir_flag_ld'
-	      module_cmds='$LD -b -o $lib $libobjs $deplibs $linker_flags $fix_hardcoded_libdir_flag_ld'
-
+    archive_cmds='$LD -b +h $soname +b $install_libdir -o $lib $libobjs $deplibs $linker_flags'
 fi
 
 	  ;;
 	esac
       fi
       if test no = "$with_gnu_ld"; then
-	hardcode_libdir_flag_spec='$wl+b $wl$libdir $fix_hardcoded_libdir_flag'
+	hardcode_libdir_flag_spec='$wl+b $wl$libdir'
 	hardcode_libdir_separator=:
 
 	case $host_cpu in
@@ -12771,43 +12754,6 @@ fi
 	  # hardcode_minus_L: Not really in the search PATH,
 	  # but as the default location of the library.
 	  hardcode_minus_L=yes
-	  # gcc-3.0.1 (collect2) breaks on -Wl,+cdp.
-	  # HP-cc ignores -Wl,+cdp, and we test the linker for +cdp support.
-	  { $as_echo "$as_me:${as_lineno-$LINENO}: checking if +cdp linker flag works" >&5
-$as_echo_n "checking if +cdp linker flag works... " >&6; }
-if ${lt_cv_ldflag_cdp_works+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  lt_cv_ldflag_cdp_works=no
-	    save_LDFLAGS=$LDFLAGS
-	    LDFLAGS="$LDFLAGS -Wl,+cdp -Wl,/usr/lib/libc.1:/nonexistent -Wl,+cdp -Wl,/lib/libc.1:/nonexistent"
-	    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  lt_cv_ldflag_cdp_works=yes
-else
-  lt_cv_ldflag_cdp_works=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-	    LDFLAGS="$save_LDFLAGS"
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $lt_cv_ldflag_cdp_works" >&5
-$as_echo "$lt_cv_ldflag_cdp_works" >&6; }
-	  if test "$lt_cv_ldflag_cdp_works" = yes; then
-	    fix_hardcoded_libdir_flag_spec='${wl}+cdp ${wl}${linkdir}/${dlname}:${libdir}/${dlname}'
-	    fix_hardcoded_libdir_flag_spec_ld='+cdp ${linkdir}/${dlname}:${libdir}/${dlname}'
-	  fi
 	  ;;
 	esac
       fi
@@ -12933,6 +12879,7 @@ $as_echo "$lt_cv_irix_exported_symbol" >&6; }
 	emximp -o $lib $output_objdir/$libname.def'
       old_archive_From_new_cmds='emximp -o $output_objdir/${libname}_dll.a $output_objdir/$libname.def'
       enable_shared_with_static_runtimes=yes
+      file_list_spec='@'
       ;;
 
     osf3*)
@@ -13209,16 +13156,6 @@ $as_echo "$lt_cv_archive_cmds_need_lc" >&6; }
   fi
   ;;
 esac
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -13650,8 +13587,8 @@ cygwin* | mingw* | pw32* | cegcc*)
     dynamic_linker='Win32 ld.exe'
     ;;
 
-  *,cl*)
-    # Native MSVC
+  *,cl* | *,icl*)
+    # Native MSVC or ICC
     libname_spec='$name'
     soname_spec='$libname`echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
     library_names_spec='$libname.dll.lib'
@@ -13707,7 +13644,7 @@ cygwin* | mingw* | pw32* | cegcc*)
     ;;
 
   *)
-    # Assume MSVC wrapper
+    # Assume MSVC and ICC wrapper
     library_names_spec='$libname`echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext $libname.lib'
     dynamic_linker='Win32 ld.exe'
     ;;
@@ -14324,7 +14261,6 @@ if test -n "$hardcode_libdir_flag_spec" ||
      # have to relink, otherwise we might link with an installed library
      # when we should be linking with a yet-to-be-installed one
      ## test no != "$_LT_TAGVAR(hardcode_shlibpath_var, )" &&
-     test -z "$fix_hardcoded_libdir_flag_spec" &&
      test no != "$hardcode_minus_L"; then
     # Linking always hardcodes the temporary library directory.
     hardcode_action=relink
@@ -14887,30 +14823,41 @@ striplib=
 old_striplib=
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether stripping libraries is possible" >&5
 $as_echo_n "checking whether stripping libraries is possible... " >&6; }
-if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
-  test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
+if test -z "$STRIP"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 else
-# FIXME - insert some real tests, host_os isn't really good enough
-  case $host_os in
-  darwin*)
-    if test -n "$STRIP"; then
+  if $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+    old_striplib="$STRIP --strip-debug"
+    striplib="$STRIP --strip-unneeded"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+  else
+    case $host_os in
+    darwin*)
+      # FIXME - insert some real tests, host_os isn't really good enough
       striplib="$STRIP -x"
       old_striplib="$STRIP -S"
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-    else
+      ;;
+    freebsd*)
+      if $STRIP -V 2>&1 | $GREP "elftoolchain" >/dev/null; then
+        old_striplib="$STRIP --strip-debug"
+        striplib="$STRIP --strip-unneeded"
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+      else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+      fi
+      ;;
+    *)
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-    fi
-    ;;
-  *)
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-    ;;
-  esac
+      ;;
+    esac
+  fi
 fi
 
 
@@ -17526,6 +17473,56 @@ $as_echo "#define HAVE_STDBOOL_H 1" >>confdefs.h
 
 fi
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether sys/types.h defines makedev" >&5
+$as_echo_n "checking whether sys/types.h defines makedev... " >&6; }
+if ${ac_cv_header_sys_types_h_makedev+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h>
+int
+main ()
+{
+return makedev(0, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_header_sys_types_h_makedev=yes
+else
+  ac_cv_header_sys_types_h_makedev=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_sys_types_h_makedev" >&5
+$as_echo "$ac_cv_header_sys_types_h_makedev" >&6; }
+
+if test $ac_cv_header_sys_types_h_makedev = no; then
+ac_fn_c_check_header_mongrel "$LINENO" "sys/mkdev.h" "ac_cv_header_sys_mkdev_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_mkdev_h" = xyes; then :
+
+$as_echo "#define MAJOR_IN_MKDEV 1" >>confdefs.h
+
+fi
+
+
+
+  if test $ac_cv_header_sys_mkdev_h = no; then
+    ac_fn_c_check_header_mongrel "$LINENO" "sys/sysmacros.h" "ac_cv_header_sys_sysmacros_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_sysmacros_h" = xyes; then :
+
+$as_echo "#define MAJOR_IN_SYSMACROS 1" >>confdefs.h
+
+fi
+
+
+  fi
+fi
+
 
 
 
@@ -17542,28 +17539,6 @@ _ACEOF
 fi
 
 done
-
-
-
-
-ac_fn_c_check_header_mongrel "$LINENO" "sys/mkdev.h" "ac_cv_header_sys_mkdev_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_mkdev_h" = xyes; then :
-
-$as_echo "#define MAJOR_IN_MKDEV 1" >>confdefs.h
-
-fi
-
-
-if test $ac_cv_header_sys_mkdev_h = no; then
-  ac_fn_c_check_header_mongrel "$LINENO" "sys/sysmacros.h" "ac_cv_header_sys_sysmacros_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_sysmacros_h" = xyes; then :
-
-$as_echo "#define MAJOR_IN_SYSMACROS 1" >>confdefs.h
-
-fi
-
-
-fi
 
 
 
@@ -21739,7 +21714,7 @@ if test "${enable_openssl-no}" != no; then
 	LDFLAGS="$LDFLAGS `$PKG_CONFIG --libs-only-L openssl`"
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for SSL_library_init in -lssl" >&5
 $as_echo_n "checking for SSL_library_init in -lssl... " >&6; }
-if ${ac_cv_lib_ssl_SSL_library_init_lcrypto+:} false; then :
+if ${ac_cv_lib_ssl_SSL_library_init+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -21763,17 +21738,17 @@ return SSL_library_init ();
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_ssl_SSL_library_init_lcrypto=yes
+  ac_cv_lib_ssl_SSL_library_init=yes
 else
-  ac_cv_lib_ssl_SSL_library_init_lcrypto=no
+  ac_cv_lib_ssl_SSL_library_init=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_SSL_library_init_lcrypto" >&5
-$as_echo "$ac_cv_lib_ssl_SSL_library_init_lcrypto" >&6; }
-if test "x$ac_cv_lib_ssl_SSL_library_init_lcrypto" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ssl_SSL_library_init" >&5
+$as_echo "$ac_cv_lib_ssl_SSL_library_init" >&6; }
+if test "x$ac_cv_lib_ssl_SSL_library_init" = xyes; then :
   STATIC=""
 else
   STATIC="--static"
@@ -23900,10 +23875,9 @@ if test ${with_pam-"no"} != "no"; then
     # Check for pam_start() in libpam first, then for pam_appl.h.
     #
     found_pam_lib=no
-    as_ac_Lib=`$as_echo "ac_cv_lib_pam_pam_start$lt_cv_dlopen_libs" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for pam_start in -lpam" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for pam_start in -lpam" >&5
 $as_echo_n "checking for pam_start in -lpam... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
+if ${ac_cv_lib_pam_pam_start+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -23927,18 +23901,17 @@ return pam_start ();
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
+  ac_cv_lib_pam_pam_start=yes
 else
-  eval "$as_ac_Lib=no"
+  ac_cv_lib_pam_pam_start=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_pam_pam_start" >&5
+$as_echo "$ac_cv_lib_pam_pam_start" >&6; }
+if test "x$ac_cv_lib_pam_pam_start" = xyes; then :
   found_pam_lib=yes
 fi
 
@@ -28985,6 +28958,7 @@ want_nocaseglob='`$ECHO "$want_nocaseglob" | $SED "$delay_single_quote_subst"`'
 DLLTOOL='`$ECHO "$DLLTOOL" | $SED "$delay_single_quote_subst"`'
 sharedlib_from_linklib_cmd='`$ECHO "$sharedlib_from_linklib_cmd" | $SED "$delay_single_quote_subst"`'
 AR='`$ECHO "$AR" | $SED "$delay_single_quote_subst"`'
+lt_ar_flags='`$ECHO "$lt_ar_flags" | $SED "$delay_single_quote_subst"`'
 AR_FLAGS='`$ECHO "$AR_FLAGS" | $SED "$delay_single_quote_subst"`'
 archiver_list_spec='`$ECHO "$archiver_list_spec" | $SED "$delay_single_quote_subst"`'
 STRIP='`$ECHO "$STRIP" | $SED "$delay_single_quote_subst"`'
@@ -29044,8 +29018,6 @@ hardcode_direct_absolute='`$ECHO "$hardcode_direct_absolute" | $SED "$delay_sing
 hardcode_minus_L='`$ECHO "$hardcode_minus_L" | $SED "$delay_single_quote_subst"`'
 hardcode_shlibpath_var='`$ECHO "$hardcode_shlibpath_var" | $SED "$delay_single_quote_subst"`'
 hardcode_automatic='`$ECHO "$hardcode_automatic" | $SED "$delay_single_quote_subst"`'
-fix_hardcoded_libdir_flag_spec='`$ECHO "$fix_hardcoded_libdir_flag_spec" | $SED "$delay_single_quote_subst"`'
-fix_hardcoded_libdir_flag_spec_ld='`$ECHO "$fix_hardcoded_libdir_flag_spec_ld" | $SED "$delay_single_quote_subst"`'
 inherit_rpath='`$ECHO "$inherit_rpath" | $SED "$delay_single_quote_subst"`'
 link_all_deplibs='`$ECHO "$link_all_deplibs" | $SED "$delay_single_quote_subst"`'
 always_export_symbols='`$ECHO "$always_export_symbols" | $SED "$delay_single_quote_subst"`'
@@ -29115,7 +29087,6 @@ want_nocaseglob \
 DLLTOOL \
 sharedlib_from_linklib_cmd \
 AR \
-AR_FLAGS \
 archiver_list_spec \
 STRIP \
 RANLIB \
@@ -29151,8 +29122,6 @@ allow_undefined_flag \
 no_undefined_flag \
 hardcode_libdir_flag_spec \
 hardcode_libdir_separator \
-fix_hardcoded_libdir_flag_spec \
-fix_hardcoded_libdir_flag_spec_ld \
 exclude_expsyms \
 include_expsyms \
 file_list_spec \
@@ -29823,7 +29792,6 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
     cat <<_LT_EOF >> "$cfgfile"
 #! $SHELL
 # Generated automatically by $as_me ($PACKAGE) $VERSION
-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.
@@ -29967,8 +29935,11 @@ sharedlib_from_linklib_cmd=$lt_sharedlib_from_linklib_cmd
 # The archiver.
 AR=$lt_AR
 
+# Flags to create an archive (by configure).
+lt_ar_flags=$lt_ar_flags
+
 # Flags to create an archive.
-AR_FLAGS=$lt_AR_FLAGS
+AR_FLAGS=\${ARFLAGS-"\$lt_ar_flags"}
 
 # How to feed a file listing to the archiver.
 archiver_list_spec=$lt_archiver_list_spec
@@ -30227,12 +30198,6 @@ hardcode_shlibpath_var=$hardcode_shlibpath_var
 # against it.
 hardcode_automatic=$hardcode_automatic
 
-# Flag to modify a path being hardcoded into the resulting binary.
-fix_hardcoded_libdir_flag_spec=$lt_fix_hardcoded_libdir_flag_spec
-
-# If ld is used when linking,flag to modify a path being hardcoded into the resulting binary.
-fix_hardcoded_libdir_flag_spec_ld=$lt_fix_hardcoded_libdir_flag_spec_ld
-
 # Set to yes if linker adds runtime paths of dependent libraries
 # to runtime path list.
 inherit_rpath=$inherit_rpath
@@ -30426,6 +30391,7 @@ $as_echo "$as_me: Warning: the $rundir/ts directory must be cleared at boot time
     { $as_echo "$as_me:${as_lineno-$LINENO}:          You may need to create a startup item to do this." >&5
 $as_echo "$as_me:          You may need to create a startup item to do this." >&6;}
 fi
+
 
 
 

@@ -50,6 +50,10 @@ char *insults[] = {
 #  include "ins_python.h"
 # endif
 
+# ifdef CHINESE_INSULTS
+#  include "ins_chinese.h"
+# endif
+
     NULL
 
 };
